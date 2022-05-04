@@ -22,6 +22,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\Stream;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * PSR-15 middleware for delivering secured files to the browser.
@@ -44,8 +45,16 @@ class TokenRefreshMiddleware implements MiddlewareInterface
      * @param ExtensionConfiguration $extensionConfiguration
      * @param Context $context
      */
-    public function __construct(ExtensionConfiguration $extensionConfiguration, Context $context)
+    public function __construct(ExtensionConfiguration $extensionConfiguration = null, Context $context = null)
     {
+        if ($extensionConfiguration === null) {
+            $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
+        }
+
+        if ($context === null) {
+            $context = GeneralUtility::makeInstance(Context::class);
+        }
+
         $this->assetPrefix = sprintf(
             '%s%s/%s',
             $extensionConfiguration->getDocumentRootPath(),
